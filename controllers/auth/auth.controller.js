@@ -17,7 +17,7 @@ exports.signin = function (req, res) {
         .then(currentUser => (user = currentUser.toJSON()))
         .then(user => UserModel.verifyPassword(password, user.password))
         .then(isUserValid => isUserValid ? _.omit(user, 'password') : Promise.reject('invalid'))
-        .then(user => getToken(user))
+        .then(user => getToken({ id: user.id, name: user.name }))
         .then(token => res.json({ token }))
         .catch(err => {
             if (err === 'invalid') return res.json(errorObj)
