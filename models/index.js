@@ -8,6 +8,7 @@ User.hasMany(Cart)
 User.hasMany(Order)
 
 Product.hasMany(Cart)
+Product.hasMany(Order)
 
 
 
