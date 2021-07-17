@@ -82,3 +82,14 @@ exports.decrementItem = (req, res) => {
             console.log(err);
         })
 }
+
+
+exports.getCartItems = (req, res) => {
+
+    var userId = req.user.id;
+    CartModal.findAll({ where: { UserId: userId } })
+        .then(data => res.json(data))
+        .catch(err => {
+            console.log(err);
+        })
+}

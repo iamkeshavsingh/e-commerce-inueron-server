@@ -8,6 +8,7 @@ const controller = require('../../controllers/cart/cart.controller')
 
 router.use(authMiddleware)
 
+router.get('/', controller.getCartItems)
 
 router.post('/', controller.addToCart);
 

@@ -9,7 +9,7 @@ router.use(authMiddleware)
 
 
 router.post('/placeOrder', controller.placeOrder)
-
+router.get('/', controller.getOrders)
 
 
 

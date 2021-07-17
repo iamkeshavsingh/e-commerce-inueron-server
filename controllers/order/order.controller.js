@@ -1,26 +1,38 @@
 const CartModal = require('../../models/Cart.modal')
 const OrderModal = require('../../models/Order.modal')
+const sequelize = require('../../config/db.config')
 
 exports.placeOrder = (req, res) => {
 
     var userId = req.user.id;
-    var items;
 
     function mapper(item) {
-        var cart = item.toJSON();
+        item = item.toJSON();
         return {
-            quantity: cart.quantity,
-            price: cart.price,
-            UserId: cart.UserId,
-            ProductId: cart.ProductId
+            quantity: item.quantity,
+            price: item.price,
+            UserId: item.UserId,
+            ProductId: item.ProductId
         };
     }
 
-    CartModal.findAll({ where: { UserId: userId } })
-        .then(cartItems => (items = cartItems))
-        .then(_ => CartModal.destroy({ where: { UserId: userId } }))
-        .then(_ => items.map(mapper))
-        .then(data => OrderModal.bulkCreate(data))
+    sequelize.transaction(async (t) => {
+
+        try {
+            var cartResponse = await CartModal.findAll({ where: { UserId: userId }, transaction: t });
+            await CartModal.destroy({ where: { UserId: userId }, transaction: t });
+            var items = cartResponse.map(mapper)
+            await OrderModal.create(items, { transaction: t })
+            return res.json(items)
+        }
+        catch (err) { console.log(err) }
+    });
+}
+
+
+exports.getOrders = (req, res) => {
+    var userId = req.user.id;
+    OrderModal.findAll({ where: { UserId: userId } })
         .then(data => res.json(data))
         .catch(err => {
             console.log(err);

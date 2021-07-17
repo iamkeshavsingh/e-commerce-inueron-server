@@ -27,6 +27,7 @@ exports.signin = function (req, res) {
 
 
 exports.signup = function (req, res) {
+
     var { username, password, name } = req.body;
     UserModel.create({ username, password, name })
         .then(user => res.json(user))
