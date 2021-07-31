@@ -14,13 +14,14 @@ exports.signin = function (req, res) {
             username: username,
         }
     })
+        .then(currentUser => !currentUser ? Promise.reject('invalid') : currentUser)
         .then(currentUser => (user = currentUser.toJSON()))
         .then(user => UserModel.verifyPassword(password, user.password))
         .then(isUserValid => isUserValid ? _.omit(user, 'password') : Promise.reject('invalid'))
         .then(user => getToken({ id: user.id, name: user.name }))
-        .then(token => res.json({ token }))
+        .then(token => res.json({ token, name: user.name, userId: user.id }))
         .catch(err => {
-            if (err === 'invalid') return res.json(errorObj)
+            if (err === 'invalid') return res.status(400).json(errorObj)
         })
 }
 
@@ -37,4 +38,12 @@ exports.signup = function (req, res) {
 exports.logout = function (req, res) {
 
 
+}
+
+
+exports.verifyToken = function (req, res) {
+    return res.json({
+        name: req.user.name,
+        userId: req.user.id
+    })
 }

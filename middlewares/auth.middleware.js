@@ -10,7 +10,7 @@ function authMiddleware(req, res, next) {
                     next();
                 })
                 .catch(err => {
-                    res.json({
+                    res.status(401).json({
                         success: false,
                         msg: 'Not authorized'
                     })
@@ -19,7 +19,7 @@ function authMiddleware(req, res, next) {
     }
 
     // User Not Valid
-    return res.json({
+    return res.status(401).json({
         success: false,
         msg: 'Not authorized'
     })

@@ -3,7 +3,8 @@ const { body } = require('express-validator')
 const UserModal = require('../../models/User.modal')
 
 const authController = require('../../controllers/auth/auth.controller')
-const errorMiddleware = require('../../middlewares/error.middleware')
+const errorMiddleware = require('../../middlewares/error.middleware');
+const authMiddleware = require('../../middlewares/auth.middleware');
 
 
 function nameValidator(name) {
@@ -45,6 +46,8 @@ router.post('/signup', [
 ], errorMiddleware, authController.signup);
 
 router.post('/logout', authController.logout);
+
+router.post('/verifyToken', authMiddleware, authController.verifyToken);
 
 
 
