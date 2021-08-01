@@ -12,20 +12,19 @@ exports.addToCart = (req, res) => {
         })
     }
 
-    function getCartData(price) {
+    function getCartData(product) {
         return {
             quantity: 1,
-            price,
             UserId: userId,
-            ProductId: productId
+            ProductId: productId,
+            price: product.price
         }
     }
-
+    let product;
     ProductModal.findByPk(productId)
-        .then(data => data.toJSON())
-        .then(product => product.price)
-        .then(price => CartModal.create(getCartData(price)))
-        .then(data => res.json(data))
+        .then(data => (product = data.toJSON()))
+        .then(product => CartModal.create(getCartData(product)))
+        .then(data => res.json({ ...data.toJSON(), imageUrl: product.images, title: product.name }))
         .catch(err => {
             console.log(err);
         })
@@ -87,7 +86,12 @@ exports.decrementItem = (req, res) => {
 exports.getCartItems = (req, res) => {
 
     var userId = req.user.id;
-    CartModal.findAll({ where: { UserId: userId } })
+    CartModal.findAll({
+        where: {
+            UserId: userId
+        },
+        includes: [ProductModal]
+    })
         .then(data => res.json(data))
         .catch(err => {
             console.log(err);
