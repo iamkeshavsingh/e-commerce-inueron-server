@@ -20,6 +20,7 @@
     "loadsh": "^0.0.4",
     "mysql2": "^2.2.5",
     "nodemon": "^2.0.7",
+    "razorpay": "^2.0.6",
     "sequelize": "^6.6.4"
   }
 }
