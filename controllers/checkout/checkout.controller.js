@@ -16,7 +16,7 @@ exports.checkout = async function (req, res) {
             }
         
         */
-        var response = await instance.orders.create({ amount: amount, currency: 'INR' })
+        var response = await instance.orders.create({ amount: amount * 100, currency: 'INR' })
         res.json({
             order_id: response.id,
             currency: response.currency,
@@ -26,4 +26,14 @@ exports.checkout = async function (req, res) {
     catch (err) {
         console.log(err)
     }
+}
+
+
+// TODO: Create a Controller to verify payment
+exports.verifyPayment = function (req, res) {
+    // razorpay paymenyid, razorpay orderid and razorpay signature
+    // Verify the signature with use of crypto-js library
+    // For code: https://razorpay.com/docs/payment-gateway/web-integration/standard/#step-5-verify-the-signature
+
+    // When the payment is valid, then we need to empty the cart and push all the items in orders table
 }

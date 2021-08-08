@@ -11,6 +11,7 @@ router.use(authMiddleware)
 
 router.post('/', controller.checkout)
 
+// TODO: We need to create a route to verify payment
 
 
 

@@ -21,6 +21,7 @@ exports.signin = function (req, res) {
         .then(user => getToken({ id: user.id, name: user.name }))
         .then(token => res.json({ token, name: user.name, userId: user.id }))
         .catch(err => {
+            console.log(err)
             if (err === 'invalid') return res.status(400).json(errorObj)
         })
 }
