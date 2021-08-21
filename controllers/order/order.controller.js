@@ -2,7 +2,7 @@ const CartModal = require('../../models/Cart.modal')
 const OrderModal = require('../../models/Order.modal')
 const sequelize = require('../../config/db.config')
 
-exports.placeOrder = (req, res) => {
+exports.placeOrder = async (req, res) => {
 
     var userId = req.user.id;
 
@@ -16,18 +16,35 @@ exports.placeOrder = (req, res) => {
         };
     }
 
-    sequelize.transaction(async (t) => {
+    // sequelize.transaction(async (t) => {
 
-        try {
-            var cartResponse = await CartModal.findAll({ where: { UserId: userId }, transaction: t });
-            await CartModal.destroy({ where: { UserId: userId }, transaction: t });
-            var items = cartResponse.map(mapper)
-            await OrderModal.create(items, { transaction: t })
-            return res.json(items)
-        }
-        catch (err) { console.log(err) }
-    });
-}
+    //     try {
+    //         var cartResponse = await CartModal.findAll({ where: { UserId: userId }, transaction: t });
+    //         await CartModal.destroy({ where: { UserId: userId }, transaction: t });
+    //         var items = cartResponse.map(mapper)
+    //         await OrderModal.create(items, { transaction: t })
+    //         return res.json(items)
+    //     }
+    //     catch (err) { console.log(err) }
+    // });
+
+    var t = await sequelize.transaction();
+
+    // Unmanaged Transaction
+    try {
+        var cartResponse = await CartModal.findAll({ where: { UserId: userId } });
+        await CartModal.destroy({ where: { UserId: userId }, transaction: t });
+        var items = cartResponse.map(mapper)
+        await OrderMod.create(items, { transaction: t })
+        await t.commit();
+        return res.json(items)
+    }
+    catch (err) {
+        console.log(err)
+            (await t.rollback());
+    }
+
+};
 
 
 exports.getOrders = (req, res) => {

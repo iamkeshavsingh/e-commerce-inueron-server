@@ -1,4 +1,15 @@
+const crypto = require('crypto');
 const instance = require("../../config/razorpay.config");
+
+const key_secret = process.env.KEY_SECRET;
+
+function generateSignature(orderId, paymentId) {
+
+    var hmac = crypto.createHmac('sha256', key_secret);
+    hmac.update(orderId + '|' + paymentId);
+    return hmac.digest('hex');
+}
+
 
 exports.checkout = async function (req, res) {
     try {
@@ -32,8 +43,7 @@ exports.checkout = async function (req, res) {
 // TODO: Create a Controller to verify payment
 exports.verifyPayment = function (req, res) {
     // razorpay paymenyid, razorpay orderid and razorpay signature
-    // Verify the signature with use of crypto-js library
     // For code: https://razorpay.com/docs/payment-gateway/web-integration/standard/#step-5-verify-the-signature
-
+    // verify the signature using generateSignature function
     // When the payment is valid, then we need to empty the cart and push all the items in orders table
 }
